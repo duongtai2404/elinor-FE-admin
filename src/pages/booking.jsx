@@ -1,22 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import _ from 'lodash';
 import 'moment/locale/vi';
 import axios from 'axios';
 // import momentTimezone from 'moment-timezone';
 import moment from 'moment';
-import Select from 'react-select';
 import { Spinner } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 
+import Box from '@mui/material/Box';
 import { Stack } from '@mui/material';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 
 import BookingByRoomTable from './bookingByRoom';
 
@@ -26,9 +25,7 @@ const InfiniteScrollTable = (props) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [bookingData, setBookingData] = useState({});
-  const [homeStayIdList, setHomeStayIdList] = useState([]);
-  const [homestay, setHomeStay] = useState([]);
-  const [roomFilterSelect, setRoomFilterSelect] = useState(null);
+  const [roomFilterSelect] = useState(null);
   const [bookingIdFilter, setBookingIdFilter] = useState(null);
   const [statisticData, setStatisticData] = useState({});
 
@@ -42,7 +39,7 @@ const InfiniteScrollTable = (props) => {
       if (bookingIdFilter) queryParams.bookingId = bookingIdFilter;
       console.log('\n - file: adminTable.js:33 - fetchRoomAvailable - queryParams:', queryParams);
 
-      let response = await axios.post('http://localhost:3000/room/checkAvailable', queryParams);
+      let response = await axios.post(`${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/room/checkAvailable`, queryParams);
       response = response?.data || {};
       console.log('\n - fetchRoomAvailable - response:', response);
 
@@ -64,7 +61,7 @@ const InfiniteScrollTable = (props) => {
       if (from) queryParams.from = from;
       if (to) queryParams.to = to;
 
-      let response = await axios.post('http://localhost:3000/booking/statistics', queryParams);
+      let response = await axios.post(`${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/booking/statistics`, queryParams);
       response = response?.data || {};
 
       setStatisticData(response?.data);

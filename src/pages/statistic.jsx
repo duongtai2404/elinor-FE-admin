@@ -1,27 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import _ from 'lodash';
 import 'moment/locale/vi';
 import axios from 'axios';
-// import momentTimezone from 'moment-timezone';
 import moment from 'moment';
 import { Spinner } from 'react-bootstrap';
+import momentTimezone from 'moment-timezone';
 import React, { useState, useEffect } from 'react';
 
-import { Stack } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import Paper from '@mui/material/Paper';
 import TableContainer from '@mui/material/TableContainer';
-
-import BookingByRoomTable from './bookingByRoom';
+import { Box,  Paper, Stack, Button } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 const dayOfWeek = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
 
@@ -39,7 +35,7 @@ const mappingData = (bookingData, actions) => {
         }}
       >
         <TableCell align="center" colSpan={1}>
-          <b>{`${dayOfWeek[moment(day, 'DD/MM/YYYY').day()]}, ${moment(day, 'DD/MM/YYYY')
+          <b>{`${dayOfWeek[momentTimezone(day, 'DD/MM/YYYY').day()]}, ${moment(day, 'DD/MM/YYYY')
             .tz('Asia/Ho_Chi_Minh')
             .format('DD/MM/YYYY')}`}</b>
           <br />
@@ -121,11 +117,8 @@ const Statistic = (props) => {
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [bookingData, setBookingData] = useState({});
-  const [homeStayIdList, setHomeStayIdList] = useState([]);
-  const [homestay, setHomeStay] = useState([]);
-  const [roomFilterSelect, setRoomFilterSelect] = useState(null);
-  const [bookingIdFilter, setBookingIdFilter] = useState(null);
+  // const [bookingData, setBookingData] = useState({});
+  const [bookingIdFilter] = useState(null);
   const [statisticData, setStatisticData] = useState({});
 
   const fetchRoomAvailable = async ({ roomId, from, to }) => {
@@ -138,11 +131,11 @@ const Statistic = (props) => {
       if (bookingIdFilter) queryParams.bookingId = bookingIdFilter;
       console.log('\n - file: adminTable.js:33 - fetchRoomAvailable - queryParams:', queryParams);
 
-      let response = await axios.post('http://localhost:3000/room/checkAvailable', queryParams);
+      let response = await axios.post(`${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/room/checkAvailable`, queryParams);
       response = response?.data || {};
       console.log('\n - fetchRoomAvailable - response:', response);
 
-      setBookingData(response?.data);
+      // setBookingData(response?.data);
     } catch (error) {
       console.log(
         `[ERROR] => call api /room/checkAvailable error ${error.message} -- ${JSON.stringify(
@@ -160,7 +153,7 @@ const Statistic = (props) => {
       if (from) queryParams.from = from;
       if (to) queryParams.to = to;
 
-      let response = await axios.post('http://localhost:3000/booking/statistics', queryParams);
+      let response = await axios.post(`${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/booking/statistics`, queryParams);
       response = response?.data || {};
 
       setStatisticData(response?.data);

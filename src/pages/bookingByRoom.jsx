@@ -1,22 +1,15 @@
 /* eslint-disable prefer-const */
 import _ from 'lodash';
-import numeral from 'numeral';
 /* eslint-disable react/prop-types */
 import * as React from 'react';
 import moment from 'moment-timezone';
-import axios from 'axios';
 
 import Table from '@mui/material/Table';
 import Paper from '@mui/material/Paper';
 import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
 import TableContainer from '@mui/material/TableContainer';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 
-import ConfirmDialog from 'src/components/dialog';
 import BookedRow from './bookedRow';
 
 const mappingData = (bookingData, actions) => {
@@ -145,7 +138,7 @@ const mappingData = (bookingData, actions) => {
 };
 
 export default function DenseTable(props) {
-  const { bookingData, statisticData = {}, subimitSearch } = props;
+  const { bookingData, subimitSearch } = props;
 
   return (
     <TableContainer component={Paper}>

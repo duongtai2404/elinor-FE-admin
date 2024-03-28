@@ -7,16 +7,13 @@ import numeral from 'numeral';
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import * as React from 'react';
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Alert, Snackbar } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
@@ -36,7 +33,7 @@ const BookedRow = (props) => {
   const handleAgree = async () => {
     setIsOpenResendEmail(false);
     try {
-      await axios.post('http://localhost:3000/booking/reSendMail', {
+      await axios.post(`${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/reSendMail`, {
         bookingId: booking.id,
       });
     } catch (error) {
@@ -53,7 +50,7 @@ const BookedRow = (props) => {
     setIsOpenCancel(false);
     try {
       await axios.post(
-        'http://localhost:3000/booking/delete',
+        `${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/booking/delete`,
         {
           bookingId: booking.id,
         },
@@ -79,7 +76,7 @@ const BookedRow = (props) => {
     setIsOpenNote(false);
     try {
       await axios.post(
-        'http://localhost:3000/booking/addNote',
+        `${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/booking/addNote`,
         {
           bookingId: booking.id,
           note,

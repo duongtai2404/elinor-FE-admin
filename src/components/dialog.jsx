@@ -1,13 +1,11 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 
 import Dialog from '@mui/material/Dialog';
+import { Button, DialogTitle } from '@mui/material';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
-
-import PropTypes from 'prop-types';
 
 const ConfirmDialog = (props) => {
   const { isOpen, handleDisagree, handleAgree, title, content } = props;
