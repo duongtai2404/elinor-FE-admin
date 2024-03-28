@@ -1,0 +1,11 @@
+.sortable-item {
+    width: '80%';
+    height: '50px';
+    border: '1px solid #00000036';
+    border-radius: '5px';
+    display: 'flex';
+    justify-content: 'center';
+    align-items: 'center';
+    cursor: 'move';
+    margin: '5px 0px';
+}

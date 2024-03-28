@@ -4,6 +4,9 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import { DndContext, closestCorners } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import {
   Box,
@@ -17,31 +20,37 @@ import {
   Alert,
 } from '@mui/material';
 import ImageUpdateForm from '../products/homestay-images';
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import { SortableItem } from 'src/components/SortableItem/SortableItem';
 
 // ----------------------------------------------------------------------
 
 export default function AppFormGeneralInformation() {
   const [formData, setFormData] = useState({
-    facebook: '',
-    tiktok: '',
-    phoneNumber: '',
-    zalo: '',
-    images: [],
-    servingTime: [],
+    address: 'Địa chỉ',
+    googleMap: 'Google map',
+    code: 'Mã khóa',
   });
 
+  const [data, setData] = useState([]);
+
   const token = localStorage.getItem('token');
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active?.id !== over?.id) {
+      const oldIndex = data.findIndex((item) => item.id === active.id);
+      const newIndex = data.findIndex((item) => item.id === over.id);
+      const newData = [...data];
+      newData.splice(oldIndex, 1);
+      newData.splice(newIndex, 0, data[oldIndex]);
+      setData(newData);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     _.set(formData, name, value);
     setFormData(formData);
-    // setFormData((prevData) => ({
-    //   ...prevData,
-    //   [name]: value,
-    // }));
-    console.log('\n - handleChange - formData:', formData);
   };
 
   const [toastInfo, setToastInfo] = useState({
@@ -61,16 +70,13 @@ export default function AppFormGeneralInformation() {
     // Xử lý dữ liệu tại đây
 
     try {
-      const data = {
-        facebook: formData.facebook,
-        tiktok: formData.tiktok,
-        phoneNumber: formData.phoneNumber,
-        zalo: formData.zalo,
-        images: formData.images,
+      const updateData = {
+        ...formData,
+        roomOrder: data
       };
       let updateInfo = await axios.post(
         'https://molly-patient-trivially.ngrok-free.app/siteInfo/update',
-        data,
+        updateData,
         {
           headers: {
             Authorization: token,
@@ -101,10 +107,17 @@ export default function AppFormGeneralInformation() {
     }
   };
 
-  const onChangeImages = (images) => {
+  const onChangeAddressImages = (images) => {
     setFormData((prevData) => ({
       ...prevData,
-      images,
+      addressImages: images,
+    }));
+  };
+
+  const onChangeLobbyImages = (images) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      lobbyImages: images,
     }));
   };
 
@@ -115,6 +128,7 @@ export default function AppFormGeneralInformation() {
         info = info?.data;
         if (info?.code === 1000) {
           setFormData(info?.data);
+          setData(info?.data?.roomOrder);
         }
       } catch (error) {
         console.log(
@@ -139,10 +153,10 @@ export default function AppFormGeneralInformation() {
           <Box mt={3}>
             <TextField
               fullWidth
-              label="Link FB"
+              label="Địa chỉ"
               variant="outlined"
-              name="facebook"
-              value={formData.facebook}
+              name="address"
+              value={formData.address}
               onChange={handleChange}
               margin="normal"
             />
@@ -153,10 +167,24 @@ export default function AppFormGeneralInformation() {
           <Box mt={3}>
             <TextField
               fullWidth
-              label="Link Tiktok"
+              label="Google map"
               variant="outlined"
-              name="tiktok"
-              value={formData.tiktok}
+              name="googleMap"
+              value={formData.googleMap}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Box>
+        </Grid>
+
+        <Grid xs={6} md={6} lg={6}>
+          <Box mt={3}>
+            <TextField
+              fullWidth
+              label="Mã khóa"
+              variant="outlined"
+              name="code"
+              value={formData.code}
               onChange={handleChange}
               margin="normal"
             />
@@ -201,7 +229,7 @@ export default function AppFormGeneralInformation() {
                 align="left"
                 gutterBottom
               >
-                Khung giờ 1 :
+                Khung giờ {index + 1}
               </Typography>
               <Grid2 xs={4} md={4} sm={4}>
                 <Box>
@@ -262,16 +290,46 @@ export default function AppFormGeneralInformation() {
         <Box mt={3}>
           <Divider style={{ border: '1px solid', width: '100%' }} />
         </Box>
+
         <Box mt={3}>
           <Typography variant="h5" fontWeight="normal" color="#1877F2" align="left" gutterBottom>
-            Hình ảnh Banner
+            Thứ tự ưu tiên sảnh
           </Typography>
-          <ImageUpdateForm onChange={onChangeImages} imagesData={formData.images} />
+        </Box>
+
+        {/* create drag and drop div */}
+
+        <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+          <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
+            <SortableContext items={data} strategy={verticalListSortingStrategy}>
+              {data.map((item) => (
+                <SortableItem key={item.roomId} item={item} />
+              ))}
+            </SortableContext>
+          </Grid2>
+        </DndContext>
+
+        <Box mt={3}>
+          <Divider style={{ border: '1px solid', width: '100%' }} />
+        </Box>
+
+        <Box mt={3}>
+          <Typography variant="h5" fontWeight="normal" color="#1877F2" align="left" gutterBottom>
+            Hình ảnh chỉ dẫn địa chỉ
+          </Typography>
+          <ImageUpdateForm onChange={onChangeAddressImages} imagesData={formData.addressImages} />
+        </Box>
+
+        <Box mt={3}>
+          <Typography variant="h5" fontWeight="normal" color="#1877F2" align="left" gutterBottom>
+            Hình ảnh hướng dẫn sảnh
+          </Typography>
+          <ImageUpdateForm onChange={onChangeLobbyImages} imagesData={formData.lobbyImages} />
         </Box>
 
         <Box mt={3} display="flex" justifyContent="flex-end">
           <Button type="submit" variant="contained" color="primary">
-            Submit
+            Lưu
           </Button>
         </Box>
       </form>
