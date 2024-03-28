@@ -8,7 +8,7 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'Thông tin trang chủ',
+    title: 'Thông tin chung',
     path: '/',
     icon: icon('ic_home'),
   },
@@ -30,7 +30,7 @@ const navConfig = [
   {
     title: 'Thống kê',
     path: '/statistic',
-    icon: icon('ic_booking'),
+    icon: icon('ic_chart'),
   },
   // {
   //   title: 'blog',

@@ -24,7 +24,7 @@ const ImageUpdateForm = (props) => {
 
         const formData = new FormData();
         formData.append('image', file);
-        let response = await axios.post('https://booking-kohl-six.vercel.app/upload', formData, {
+        let response = await axios.post('https://molly-patient-trivially.ngrok-free.app/upload', formData, {
             headers: {
               'Authorization': token,
               'Content-Type': 'multipart/form-data',

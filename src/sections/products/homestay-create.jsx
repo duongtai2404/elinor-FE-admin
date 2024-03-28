@@ -109,7 +109,7 @@ export default function HomeStayCreate() {
         }
 
           try {
-            let updateHomeStay = await axios.post('https://booking-kohl-six.vercel.app/room', data, {
+            let updateHomeStay = await axios.post('https://molly-patient-trivially.ngrok-free.app/room', data, {
               headers: {
                 Authorization: token 
               }
@@ -149,7 +149,7 @@ export default function HomeStayCreate() {
 
     //     const fetchHomeStay = async () => {
     //       try {
-    //           let homestayResult = await axios.post('https://booking-kohl-six.vercel.app/room/search');
+    //           let homestayResult = await axios.post('https://molly-patient-trivially.ngrok-free.app/room/search');
     //           homestayResult = homestayResult?.data;
     //           if (homestayResult?.code === 1000) {
     //               setHomeStay(homestayResult?.data?.rooms);
