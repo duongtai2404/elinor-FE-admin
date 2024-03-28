@@ -33,7 +33,7 @@ const BookedRow = (props) => {
   const handleAgree = async () => {
     setIsOpenResendEmail(false);
     try {
-      await axios.post(`${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/reSendMail`, {
+      await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'http://localhost:3000'}/reSendMail`, {
         bookingId: booking.id,
       });
     } catch (error) {
@@ -50,7 +50,7 @@ const BookedRow = (props) => {
     setIsOpenCancel(false);
     try {
       await axios.post(
-        `${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/booking/delete`,
+        `${import.meta.env.VITE_URL_BACKEND || 'http://localhost:3000'}/booking/delete`,
         {
           bookingId: booking.id,
         },
@@ -76,7 +76,7 @@ const BookedRow = (props) => {
     setIsOpenNote(false);
     try {
       await axios.post(
-        `${process?.env?.REACT_APP_URL_BACKEND || 'http://localhost:3000'}/booking/addNote`,
+        `${import.meta.env.VITE_URL_BACKEND || 'http://localhost:3000'}/booking/addNote`,
         {
           bookingId: booking.id,
           note,
