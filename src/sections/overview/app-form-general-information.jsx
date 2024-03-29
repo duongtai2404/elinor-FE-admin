@@ -50,7 +50,7 @@ export default function AppFormGeneralInformation() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     _.set(formData, name, value);
-    setFormData(formData);
+    setFormData({...formData});
   };
 
   const [toastInfo, setToastInfo] = useState({
