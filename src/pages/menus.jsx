@@ -34,8 +34,8 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import numeral from 'numeral';
-import HomeStayCreate from './homestay-create';
-import ImageUpdateForm from './homestay-images';
+import HomeStayCreate from '../sections/menu/menu-create';
+import ImageUpdateForm from '../sections/products/homestay-images';
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';

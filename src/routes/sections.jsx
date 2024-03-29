@@ -12,6 +12,7 @@ export const ChangePassPage = lazy(() => import('src/pages/change-pass'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const BookingPage = lazy(() => import('src/pages/booking'));
 export const StatisticPage = lazy(() => import('src/pages/statistic'));
+const MenuPage = lazy(() => import('src/pages/menus'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -33,6 +34,7 @@ export default function Router(props) {
         { path: 'homestay', element: !props?.token ? <Navigate to="/login" replace /> : <ProductsPage /> },
         { path: 'booking', element: !props?.token ? <Navigate to="/login" replace /> : <BookingPage /> },
         { path: 'statistic', element: !props?.token ? <Navigate to="/login" replace /> : <StatisticPage /> },
+        { path: 'menu', element: !props?.token ? <Navigate to="/login" replace /> : <MenuPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },

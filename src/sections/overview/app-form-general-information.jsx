@@ -50,7 +50,7 @@ export default function AppFormGeneralInformation() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     _.set(formData, name, value);
-    setFormData({...formData});
+    setFormData({ ...formData });
   };
 
   const [toastInfo, setToastInfo] = useState({
@@ -72,7 +72,7 @@ export default function AppFormGeneralInformation() {
     try {
       const updateData = {
         ...formData,
-        roomOrder: data
+        roomOrder: data,
       };
       let updateInfo = await axios.post(
         'https://molly-patient-trivially.ngrok-free.app/siteInfo/update',
@@ -255,7 +255,14 @@ export default function AppFormGeneralInformation() {
               <Grid2 xs={2} md={2} sm={2} display="flex" justifyContent="center">
                 <Box display="flex" justifyContent="center">
                   {' '}
-                  <p style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '15px' }}>
+                  <p
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: 'lighter',
+                      marginTop: '15px',
+                      color: '#00000054',
+                    }}
+                  >
                     {' '}
                     -{' '}
                   </p>{' '}

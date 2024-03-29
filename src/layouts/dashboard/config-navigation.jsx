@@ -18,9 +18,14 @@ const navConfig = [
   //   icon: icon('ic_user'),
   // },
   {
-    title: 'Quản lý Sảnh',
+    title: 'Sảnh',
     path: '/homestay',
     icon: icon('ic_hotel'),
+  },
+  {
+    title: 'Menu',
+    path: '/menu',
+    icon: icon('ic_menu'),
   },
   {
     title: 'Booking',
