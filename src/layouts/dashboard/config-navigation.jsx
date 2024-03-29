@@ -18,7 +18,7 @@ const navConfig = [
   //   icon: icon('ic_user'),
   // },
   {
-    title: 'HomeStay',
+    title: 'Quản lý Sảnh',
     path: '/homestay',
     icon: icon('ic_hotel'),
   },

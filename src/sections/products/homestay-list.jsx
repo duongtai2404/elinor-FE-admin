@@ -348,7 +348,7 @@ export default function HomeStayList() {
         <Grid2 container spacing={2}>
           <Grid2 xs={3} md={3} sm={2} display="flex" justifyContent="flex-start">
             <Typography variant="h4" align="center">
-              {isShowCreateHomeStay ? 'Tạo phòng' : 'Quản lý phòng'}
+              {isShowCreateHomeStay ? 'Tạo sảnh' : 'Quản lý sảnh'}
             </Typography>
           </Grid2>
           <Grid2 xs={9} md={9} sm={9} display="flex" justifyContent="flex-end">
@@ -448,17 +448,6 @@ export default function HomeStayList() {
                   <Box mt={3}>
                     <TextField
                       fullWidth
-                      label="Link địa chỉ (Google Map)"
-                      variant="outlined"
-                      name="addressLink"
-                      value={formData.addressLink}
-                      onChange={handleChange}
-                      margin="normal"
-                    />
-                  </Box>
-                  <Box mt={3}>
-                    <TextField
-                      fullWidth
                       label="Link thông tin phòng (Google Drive)"
                       variant="outlined"
                       name="googleDriveLink"
@@ -470,43 +459,10 @@ export default function HomeStayList() {
                   <Box mt={3}>
                     <TextField
                       fullWidth
-                      label="Link thông tin check-in (Google Drive)"
-                      variant="outlined"
-                      name="selfCheckInLink"
-                      value={formData.selfCheckInLink}
-                      onChange={handleChange}
-                      margin="normal"
-                    />
-                  </Box>
-                  <Box mt={3}>
-                    <TextField
-                      fullWidth
                       label="HDSD (máy chiếu)"
                       variant="outlined"
                       name="projector"
                       value={formData.projector}
-                      onChange={handleChange}
-                      margin="normal"
-                    />
-                  </Box>
-                  <Box mt={3}>
-                    <TextField
-                      fullWidth
-                      label="Nội quy"
-                      variant="outlined"
-                      name="rule"
-                      value={formData.rule}
-                      onChange={handleChange}
-                      margin="normal"
-                    />
-                  </Box>
-                  <Box mt={3}>
-                    <TextField
-                      fullWidth
-                      label="Wifi"
-                      variant="outlined"
-                      name="wifi"
-                      value={formData.wifi}
                       onChange={handleChange}
                       margin="normal"
                     />
@@ -568,78 +524,8 @@ export default function HomeStayList() {
                 <Box mt={3}>
                   <Divider style={{ border: '1px solid', width: '100%' }} />
                 </Box>
-                <Box mt={3}>
-                  <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-                    Giá
-                  </Typography>
-                  <Grid2 container spacing={2}>
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="3 giờ"
-                        variant="outlined"
-                        name="threeHours"
-                        value={numeral(formData.threeHours).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
 
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Qua đêm"
-                        variant="outlined"
-                        name="overNight"
-                        value={numeral(formData.overNight).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2}>
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Ngày"
-                        variant="outlined"
-                        name="day"
-                        value={numeral(formData.day).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Tuần"
-                        variant="outlined"
-                        name="week"
-                        value={numeral(formData.week).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2}>
-                    <Grid2 xs={12} md={12} sm={12}>
-                      <TextField
-                        fullWidth
-                        label="Giảm giá"
-                        variant="outlined"
-                        name="compoDiscount"
-                        value={numeral(formData.compoDiscount).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-                  </Grid2>
-                </Box>
-
-                <Box mt={3}>
+                {/* <Box mt={3}>
                   <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
                     Giá áp dụng ngày đặc biệt
                   </Typography>
@@ -754,272 +640,8 @@ export default function HomeStayList() {
                       />
                     </Grid2>
                   </Grid2>
-                </Box>
+                </Box> */}
 
-                <Box mt={3}>
-                  <Divider style={{ border: '1px solid', width: '100%' }} />
-                </Box>
-
-                <Box mt={3}>
-                  <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-                    Khung giờ
-                  </Typography>
-                  <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
-                    <Typography
-                      style={{ marginTop: '25px', marginRight: '25px' }}
-                      variant="h7"
-                      align="left"
-                      gutterBottom
-                    >
-                      Khung giờ 1 :
-                    </Typography>
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian bắt đầu"
-                          variant="outlined"
-                          type="time"
-                          value={formData.time1Start}
-                          name="time1Start"
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                    <Grid2 xs={2} md={2} sm={2} display="flex" justifyContent="center">
-                      <Box display="flex" justifyContent="center">
-                        {' '}
-                        <p style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '15px' }}>
-                          {' '}
-                          -{' '}
-                        </p>{' '}
-                      </Box>
-                    </Grid2>
-
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian kết thúc"
-                          variant="outlined"
-                          type="time"
-                          name="time1End"
-                          value={formData.time1End}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
-                    <Typography
-                      style={{ marginTop: '25px', marginRight: '25px' }}
-                      variant="h7"
-                      align="left"
-                      gutterBottom
-                    >
-                      Khung giờ 2 :
-                    </Typography>
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian bắt đầu"
-                          variant="outlined"
-                          type="time"
-                          name="time2Start"
-                          value={formData.time2Start}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                    <Grid2 xs={2} md={2} sm={2} display="flex" justifyContent="center">
-                      <Box display="flex" justifyContent="center">
-                        {' '}
-                        <p style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '15px' }}>
-                          {' '}
-                          -{' '}
-                        </p>{' '}
-                      </Box>
-                    </Grid2>
-
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian kết thúc"
-                          variant="outlined"
-                          type="time"
-                          name="time2End"
-                          value={formData.time2End}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
-                    <Typography
-                      style={{ marginTop: '25px', marginRight: '25px' }}
-                      variant="h7"
-                      align="left"
-                      gutterBottom
-                    >
-                      Khung giờ 3 :
-                    </Typography>
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian bắt đầu"
-                          variant="outlined"
-                          type="time"
-                          name="time3Start"
-                          value={formData.time3Start}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                    <Grid2 xs={2} md={2} sm={2} display="flex" justifyContent="center">
-                      <Box display="flex" justifyContent="center">
-                        {' '}
-                        <p style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '15px' }}>
-                          {' '}
-                          -{' '}
-                        </p>{' '}
-                      </Box>
-                    </Grid2>
-
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian kết thúc"
-                          variant="outlined"
-                          name="time3End"
-                          type="time"
-                          value={formData.time3End}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
-                    <Typography
-                      style={{ marginTop: '25px', marginRight: '40px' }}
-                      variant="h7"
-                      align="left"
-                      gutterBottom
-                    >
-                      Qua đêm :
-                    </Typography>
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian bắt đầu"
-                          variant="outlined"
-                          name="overNightStart"
-                          type="time"
-                          value={formData.overNightStart}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                    <Grid2 xs={2} md={2} sm={2} display="flex" justifyContent="center">
-                      <Box display="flex" justifyContent="center">
-                        {' '}
-                        <p style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '15px' }}>
-                          {' '}
-                          -{' '}
-                        </p>{' '}
-                      </Box>
-                    </Grid2>
-
-                    <Grid2 xs={4} md={4} sm={4}>
-                      <Box>
-                        <TextField
-                          fullWidth
-                          label="Thời gian kết thúc"
-                          variant="outlined"
-                          name="overNightEnd"
-                          type="time"
-                          value={formData.overNightEnd}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          InputProps={{
-                            inputProps: {
-                              step: 1800, // 5 minutes
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Grid2>
-                  </Grid2>
-                </Box>
-
-                <Box mt={3}>
-                  <Divider style={{ border: '1px solid', width: '100%' }} />
-                </Box>
                 <Box mt={3}>
                   <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
                     Hình ảnh
