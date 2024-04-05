@@ -33,7 +33,7 @@ const BookedRow = (props) => {
   const handleAgree = async () => {
     setIsOpenResendEmail(false);
     try {
-      await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/reSendMail`, {
+      await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/booking/reSendMail`, {
         bookingId: booking.id,
       });
     } catch (error) {
