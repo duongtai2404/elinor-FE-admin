@@ -19,6 +19,8 @@ import {
   Button,
   Grid,
   Divider,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -28,25 +30,36 @@ import ImageUpdateForm from '../products/homestay-images';
 
 // ----------------------------------------------------------------------
 
-export default function HomeStayCreate() {
+export default function MenuCreate() {
   const token = localStorage.getItem('token');
 
   const [formData, setFormData] = useState({
     name: '',
+    description: '',
+    price: 0,
+    customerNumber: 0,
     images: [],
-    tables: [],
+    items: [],
+    type: ''
   });
 
   const handleChange = (e) => {
     const { name } = e.target;
     const { value } = e.target;
-    if (_.includes(name, 'tableName')) {
-      const tableIndex = _.toNumber(_.split(name, '-')[1]);
-      const updatedTables = [...formData.tables];
-      updatedTables[tableIndex].name = value;
+    if (_.includes(name, 'foodName')) {
+      const foodIndex = _.toNumber(_.split(name, '-')[1]);
+      const updateItemsFood = [...formData.items];
+      updateItemsFood[foodIndex] .name = value;
       setFormData((prevData) => ({
         ...prevData,
-        tables: updatedTables,
+        items: updateItemsFood,
+      }));
+      return;
+    }
+    if(_.includes(['premium', 'standard'], _.lowerCase(name))){
+      setFormData((prevData) => ({
+        ...prevData,
+        type: _.lowerCase(name),
       }));
       return;
     }
@@ -73,13 +86,17 @@ export default function HomeStayCreate() {
     // Xử lý dữ liệu tại đây
     const data = {
       name: formData.name,
-      tables: formData.tables,
+      description: formData.description,
+      price: _.parseInt(_.replace(formData.price, /,/g, '')),
+      customerNumber: _.parseInt(formData.customerNumber),
       images: formData.images,
+      items: formData.items,
+      type: formData.type + _.parseInt(formData.customerNumber)
     };
 
     try {
-      let updateHomeStay = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room',
+      let createMenu = await axios.post(
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/menu`,
         data,
         {
           headers: {
@@ -87,15 +104,15 @@ export default function HomeStayCreate() {
           },
         }
       );
-      updateHomeStay = updateHomeStay?.data;
-      if (updateHomeStay?.code === 1000) {
+      createMenu = createMenu?.data;
+      if (createMenu?.code === 1000) {
         setToastInfo({
           type: 'success',
           message: 'Tạo thành công',
         });
       } else {
         setToastInfo({
-          type: 'success',
+          type: 'error',
           message: 'Tạo thất bại',
         });
       }
@@ -103,7 +120,7 @@ export default function HomeStayCreate() {
     } catch (error) {
       console.log(`ERROR when call update homestay ${error.message} -- ${JSON.stringify(error)}`);
       setToastInfo({
-        type: 'success',
+        type: 'error',
         message: 'Tạo thất bại',
       });
       setOpenToast(true);
@@ -118,18 +135,6 @@ export default function HomeStayCreate() {
   };
 
   useEffect(() => {
-    //     const fetchHomeStay = async () => {
-    //       try {
-    //           let homestayResult = await axios.post('https://molly-patient-trivially.ngrok-free.app/room/search');
-    //           homestayResult = homestayResult?.data;
-    //           if (homestayResult?.code === 1000) {
-    //               setHomeStay(homestayResult?.data?.rooms);
-    //           }
-    //       } catch (error) {
-    //           console.log(`ERROR when call get list homestay ${error.message} -- ${JSON.stringify(error)}`);
-    //       }
-    //   }
-    //   fetchHomeStay();
   }, []);
 
   return (
@@ -138,7 +143,7 @@ export default function HomeStayCreate() {
         <form onSubmit={handleSubmit}>
           <Box>
             <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-              Thông tin sảnh
+              Thông tin Menu
             </Typography>
 
             <Box mt={3}>
@@ -152,6 +157,49 @@ export default function HomeStayCreate() {
                 margin="normal"
               />
             </Box>
+            <Box mt={3}>
+              <TextField
+                fullWidth
+                label="Mô tả"
+                variant="outlined"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                margin="normal"
+              />
+            </Box>
+            <Box mt={3}>
+              <TextField
+                fullWidth
+                label="Giá"
+                variant="outlined"
+                name="price"
+                value={numeral(formData.price).format('0,0')}
+                onChange={handleChange}
+                margin="normal"
+              />
+            </Box>
+            <Box mt={3}>
+              <TextField
+                fullWidth
+                label="Số người"
+                variant="outlined"
+                name="customerNumber"
+                value={formData.customerNumber}
+                onChange={handleChange}
+                margin="normal"
+              />
+            </Box>
+            <Box mt={3}>
+              <FormControlLabel
+                control={<Checkbox checked={formData.type === 'premium'} onChange={handleChange} name="premium" />}
+                label="Premium"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={formData.type === 'standard'} onChange={handleChange} name="standard" />}
+                label="Standard"
+              />
+            </Box>
           </Box>
           <Box mt={3}>
             <Divider style={{ border: '1px solid', width: '100%' }} />
@@ -159,17 +207,17 @@ export default function HomeStayCreate() {
 
           <Box mt={3}>
             <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-              Danh sách bàn
+            Danh sách đồ ăn
             </Typography>
-            {_.map(formData.tables, (table, index) => (
+            {_.map(formData.items, (food, index) => (
               <Grid2 container spacing={2} display="flex" alignItems="center" mt={3}>
                 <Box mt={3}>
                   <TextField
                     fullWidth
-                    label="Tên bàn"
+                    label="Tên món"
                     variant="outlined"
-                    name={`tableName-${index}`}
-                    value={table.name}
+                    name={`foodName-${index}`}
+                    value={food.name}
                     onChange={handleChange}
                     margin="normal"
                   />
@@ -180,7 +228,7 @@ export default function HomeStayCreate() {
                     onClick={() => {
                       setFormData((prevData) => ({
                         ...prevData,
-                        tables: _.filter(prevData.tables, (item, idx) => idx !== index),
+                        items: _.filter(prevData.items, (item, idx) => idx !== index),
                       }));
                     }}
                     variant="contained"
@@ -197,13 +245,13 @@ export default function HomeStayCreate() {
                 onClick={() => {
                   setFormData((prevData) => ({
                     ...prevData,
-                    tables: [...prevData.tables, { name: '' }],
+                    items: [...prevData.items, { name: '' }],
                   }));
                 }}
                 variant="contained"
                 color="primary"
               >
-                + Thêm bàn
+                + Thêm món ăn
               </Button>
             </Box>
           </Box>
@@ -220,7 +268,7 @@ export default function HomeStayCreate() {
 
           <Box mt={3} display="flex" justifyContent="flex-end">
             <Button type="submit" variant="contained" color="primary">
-              Submit
+              Tạo
             </Button>
           </Box>
         </form>

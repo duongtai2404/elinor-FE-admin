@@ -29,60 +29,43 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import numeral from 'numeral';
-import HomeStayCreate from '../sections/menu/menu-create';
+import MenuCreate from '../sections/menu/menu-create';
 import ImageUpdateForm from '../sections/products/homestay-images';
-
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
 // ----------------------------------------------------------------------
 
 export default function HomeStayList() {
+  // danh sách menu chung
+  const [menuList, setMenuList] = useState([]);
+  // danh sách menu theo số khách hàng
+  const [menuByPeople, setMenuByPeople] = useState([]);
+  // menu được chọn
+  const [selectedMenu, setSelectedMenu] = useState({});
   const [homestay, setHomeStay] = useState([]);
   const [selectHomeStay, setSelectHomeStay] = useState({});
   const [selectRoomTitle, setSelectRoomTitle] = useState('');
   const [isShowCreateHomeStay, setIsShowCreateHomeStay] = useState(false);
   const [openConfirmDeleted, setOpenConfirmDeleted] = useState(false);
 
+  // số khách hàng
+  const [numPeople, setNumPeople] = useState(2);
+
   const token = localStorage.getItem('token');
 
   const [formData, setFormData] = useState({
     name: '',
-    slug: '',
-    address: '',
-    addressLink: '',
-    googleDriveLink: '',
-    selfCheckInLink: '',
-    compoDiscount: 0,
-    day: 0,
-    overNight: 0,
-    threeHours: 0,
-    week: 0,
-    time1Start: '',
-    time1End: '',
-    time2Start: '',
-    time2End: '',
-    time3Start: '',
-    time3End: '',
-    overNightStart: '',
-    overNightEnd: '',
+    description: '',
+    price: 0,
+    customerNumber: 0,
     images: [],
-    rule: '',
-    wifi: '',
-    projector: '',
-    daySpecial: 0,
-    overNightSpecial: 0,
-    threeHoursSpecial: 0,
-    weekSpecial: 0,
-    startSpecialDate: null,
-    endSpecialDate: null,
-    tables: [],
+    items: [],
+    type: ''
   });
 
   const [toastInfo, setToastInfo] = useState({
@@ -100,13 +83,20 @@ export default function HomeStayList() {
   const handleChange = (e) => {
     const { name } = e.target;
     const { value } = e.target;
-    if (_.includes(name, 'tableName')) {
-      const tableIndex = _.toNumber(_.split(name, '-')[1]);
-      const updatedTables = [...formData.tables];
-      updatedTables[tableIndex].name = value;
+    if (_.includes(name, 'foodName')) {
+      const foodIndex = _.toNumber(_.split(name, '-')[1]);
+      const updateItemsFood = [...formData.items];
+      updateItemsFood[foodIndex] .name = value;
       setFormData((prevData) => ({
         ...prevData,
-        tables: updatedTables,
+        items: updateItemsFood,
+      }));
+      return;
+    }
+    if(_.includes(['premium', 'standard'], _.lowerCase(name))){
+      setFormData((prevData) => ({
+        ...prevData,
+        type: _.lowerCase(name),
       }));
       return;
     }
@@ -120,80 +110,19 @@ export default function HomeStayList() {
     e.preventDefault();
     // Xử lý dữ liệu tại đây
     const data = {
-      id: selectHomeStay.id,
+      id: selectedMenu.id,
       name: formData.name,
-      address: formData.address,
-      addressLink: formData.addressLink,
-      googleDriveLink: formData.googleDriveLink,
-      selfCheckInLink: formData.selfCheckInLink,
-      bookingTimeSlots: [
-        {
-          name: 'threeHours',
-          startTime: formData.time1Start,
-          endTime: formData.time1End,
-        },
-        {
-          name: 'threeHours',
-          startTime: formData.time2Start,
-          endTime: formData.time2End,
-        },
-        {
-          name: 'threeHours',
-          startTime: formData.time3Start,
-          endTime: formData.time3End,
-        },
-        {
-          name: 'overNight',
-          startTime: formData.overNightStart,
-          endTime: formData.overNightEnd,
-        },
-      ],
-      priceList: {
-        threeHours: formData.threeHours,
-        overNight: formData.overNight,
-        day: formData.day,
-        week: formData.week,
-        compoDiscount: formData.compoDiscount,
-      },
+      description: formData.description,
+      price: _.parseInt(_.replace(formData.price, /,/g, '')),
+      customerNumber: _.parseInt(formData.customerNumber),
       images: formData.images,
-      projector: formData.projector,
-      rule: formData.rule,
-      wifi: formData.wifi,
+      items: formData.items,
+      type: formData.type + _.parseInt(formData.customerNumber)
     };
 
-    if (
-      formData.threeHoursSpecial !== 0 &&
-      formData.daySpecial !== 0 &&
-      formData.weekSpecial !== 0 &&
-      formData.overNightSpecial !== 0
-    ) {
-      const customPrice = {
-        date: {
-          from: moment(formData.startSpecialDate).startOf('day').toISOString(),
-          to: moment(formData.endSpecialDate).endOf('day').toISOString(),
-        },
-        priceList: {
-          threeHours: _.toNumber(formData.threeHoursSpecial),
-          overNight: _.toNumber(formData.overNightSpecial),
-          day: _.toNumber(formData.daySpecial),
-          week: _.toNumber(formData.weekSpecial),
-        },
-      };
-      data.customPrice = customPrice;
-    }
-
-    if (
-      formData.threeHoursSpecial === 0 &&
-      formData.daySpecial === 0 &&
-      formData.weekSpecial === 0 &&
-      formData.overNightSpecial === 0
-    ) {
-      data.customPrice = {};
-    }
-
     try {
-      let updateHomeStay = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room',
+      let updateMenu = await axios.post(
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/menu`,
         data,
         {
           headers: {
@@ -201,26 +130,16 @@ export default function HomeStayList() {
           },
         }
       );
-      const updateTable = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/table',
-        {
-          tableList: formData.tables,
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      updateHomeStay = updateHomeStay?.data;
-      if (updateHomeStay?.code === 1000) {
+      updateMenu = updateMenu?.data;
+      if (updateMenu?.code === 1000) {
         setToastInfo({
           type: 'success',
           message: 'Cập nhật thành công',
         });
+        await fetchMenu();
       } else {
         setToastInfo({
-          type: 'success',
+          type: 'error',
           message: 'Cập nhật thất bại',
         });
       }
@@ -228,7 +147,7 @@ export default function HomeStayList() {
     } catch (error) {
       console.log(`ERROR when call update homestay ${error.message} -- ${JSON.stringify(error)}`);
       setToastInfo({
-        type: 'success',
+        type: 'error',
         message: 'Cập nhật thất bại',
       });
       setOpenToast(true);
@@ -242,56 +161,40 @@ export default function HomeStayList() {
     }));
   };
 
-  const handleChangeRoomTitle = (e) => {
-    const selectedRoom = _.find(homestay, { id: e.target.value });
-    setSelectRoomTitle(selectedRoom.id);
-    setSelectHomeStay(selectedRoom);
-    setFormData({
-      name: selectedRoom?.name,
-      slug: selectedRoom?.slug,
-      address: selectedRoom?.address,
-      addressLink: selectedRoom?.addressLink,
-      googleDriveLink: selectedRoom?.googleDriveLink,
-      selfCheckInLink: selectedRoom?.selfCheckInLink,
-      compoDiscount: selectedRoom?.priceList?.compoDiscount,
-      day: selectedRoom?.priceList?.day,
-      overNight: selectedRoom?.priceList?.overNight,
-      threeHours: selectedRoom?.priceList?.threeHours,
-      week: selectedRoom?.priceList?.week,
-      time1Start: selectedRoom?.bookingTimeSlots?.[0].startTime,
-      time1End: selectedRoom?.bookingTimeSlots?.[0].endTime,
-      time2Start: selectedRoom?.bookingTimeSlots?.[1].startTime,
-      time2End: selectedRoom?.bookingTimeSlots?.[1].endTime,
-      time3Start: selectedRoom?.bookingTimeSlots?.[2].startTime,
-      time3End: selectedRoom?.bookingTimeSlots?.[2].endTime,
-      overNightStart: selectedRoom?.bookingTimeSlots?.[3].startTime,
-      overNightEnd: selectedRoom?.bookingTimeSlots?.[3].endTime,
-      images: selectedRoom?.images,
-      projector: selectedRoom.projector,
-      rule: selectedRoom.rule,
-      wifi: selectedRoom.wifi,
-      daySpecial: selectedRoom?.customPrice?.priceList?.day || 0,
-      overNightSpecial: selectedRoom?.customPrice?.priceList?.overNight || 0,
-      threeHoursSpecial: selectedRoom?.customPrice?.priceList?.threeHours || 0,
-      weekSpecial: selectedRoom?.customPrice?.priceList?.week || 0,
-      startSpecialDate: moment(
-        selectedRoom?.customPrice?.date?.from || momentTimezone().tz('Asia/Ho_Chi_Minh')
-      ),
-      endSpecialDate: moment(
-        selectedRoom?.customPrice?.date?.to || momentTimezone().tz('Asia/Ho_Chi_Minh')
-      ),
-      tables: selectedRoom?.tables,
-    });
-  };
 
-  const deletedHomeStay = async () => {
+  // filter menu theo số người
+  const handleChangeMenu = (e) => {
+    const selectedMenuId = e.target.value;
+    const selectedMenuByUser = _.find(menuByPeople, { id: selectedMenuId});
+    setSelectedMenu(selectedMenuByUser);
+    setFormData({
+      id: selectedMenuByUser?.id,
+      name: selectedMenuByUser?.name,
+      description: selectedMenuByUser?.description,
+      price: selectedMenuByUser?.price,
+      customerNumber: selectedMenuByUser?.customerNumber,
+      images: selectedMenuByUser?.images,
+      items: selectedMenuByUser?.items,
+      type: selectedMenuByUser?.type
+    });
+  }
+
+  // filter menu theo số người
+  const handleChangeNumPeople = (e) => {
+    const selectedNumPeople = e.target.value;
+    setNumPeople(selectedNumPeople);
+    setMenuByPeople(menuList[selectedNumPeople]);
+  }
+
+  // xóa menu
+  const deletedMenu = async () => {
     try {
       const data = {
-        id: selectHomeStay.id,
+        id: selectedMenu.id,
         isDeleted: true,
       };
       let deletedResult = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room',
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/menu`,
         data,
         {
           headers: {
@@ -324,22 +227,30 @@ export default function HomeStayList() {
     setOpenConfirmDeleted(false);
   };
 
-  const fetchHomeStay = async () => {
+  // lấy thông tin toàn bộ menu
+  const fetchMenu = async () => {
     try {
-      let homestayResult = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room/search'
+      let menuListResult = await axios.post(
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/menu/search`
       );
-      homestayResult = homestayResult?.data;
-      if (homestayResult?.code === 1000) {
-        setHomeStay(homestayResult?.data?.rooms);
+      menuListResult = menuListResult?.data;
+      if (menuListResult?.code === 1000) {
+        let data = _.map(menuListResult?.data, (item) => ({
+          ..._.pick(item, ['name', 'price', 'images', 'items', 'description', 'customerNumber', 'id']),
+          type: _.replace(item.type, /\d/g, '')
+        }));
+        data = _.groupBy(data, 'customerNumber');
+
+        setMenuList(data);
+        setMenuByPeople(data[numPeople || 2])
       }
     } catch (error) {
-      console.log(`ERROR when call get list homestay ${error.message} -- ${JSON.stringify(error)}`);
+      console.log(`ERROR when call get list menu ${error.message} -- ${JSON.stringify(error)}`);
     }
   };
 
   useEffect(() => {
-    fetchHomeStay();
+    fetchMenu();
   }, []);
 
   return (
@@ -348,13 +259,14 @@ export default function HomeStayList() {
         <Grid2 container spacing={2}>
           <Grid2 xs={3} md={3} sm={2} display="flex" justifyContent="flex-start">
             <Typography variant="h4" align="center">
-              {isShowCreateHomeStay ? 'Tạo sảnh' : 'Quản lý sảnh'}
+              {isShowCreateHomeStay ? 'Tạo Menu' : 'Quản lý Menu'}
             </Typography>
           </Grid2>
           <Grid2 xs={9} md={9} sm={9} display="flex" justifyContent="flex-end">
             <Button
               style={{ marginRight: '10px' }}
               onClick={() => {
+                fetchMenu();
                 setIsShowCreateHomeStay(false);
               }}
               variant="contained"
@@ -375,38 +287,58 @@ export default function HomeStayList() {
         </Grid2>
       </Box>
       {isShowCreateHomeStay ? (
-        <HomeStayCreate />
+        <MenuCreate />
       ) : (
         <>
           <Box mt={3}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="room-select-label">Danh sách sảnh</InputLabel>
+            <FormControl style={{width: '75%', marginRight: '30px'}} variant="outlined" >
+              <InputLabel id="room-select-label">Danh sách Menu</InputLabel>
               <Select
                 labelId="room-select-label"
                 id="room-select"
-                label="Danh sách sảnh"
-                value={selectRoomTitle}
-                onChange={handleChangeRoomTitle}
+                label="Danh sách Menu"
+                value={selectedMenu.id}
+                onChange={handleChangeMenu}
               >
-                {homestay.map((room, index) => (
+                {menuByPeople.map((room, index) => (
                   <MenuItem key={index} value={room.id}>
                     {room.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
+            <FormControl style={{width: '20%'}} variant="outlined">
+                <InputLabel id="room-select-label">Số người</InputLabel>
+                <Select
+                  labelId="room-select-label"
+                  id="room-select"
+                  label="Số người"
+                  value={numPeople}
+                  onChange={handleChangeNumPeople}
+                >
+                  {[1,2,3,4,5,6,7,8].map((room, index) => (
+                    <MenuItem key={index} value={room}>
+                      {room}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
           </Box>
+
+          {/* <Box mt={3}>
+            
+          </Box> */}
 
           <Box mt={3}>
             <Divider style={{ border: '1px solid', width: '100%' }} />
           </Box>
 
-          {!_.isEmpty(selectHomeStay) && (
+          {!_.isEmpty(selectedMenu) && (
             <Box mt={3}>
               <form onSubmit={handleSubmit}>
                 <Box>
                   <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-                    Thông tin phòng
+                    Thông tin Menu
                   </Typography>
 
                   <Box mt={3}>
@@ -420,23 +352,66 @@ export default function HomeStayList() {
                       margin="normal"
                     />
                   </Box>
+                  <Box mt={3}>
+                    <TextField
+                      fullWidth
+                      label="Mô tả"
+                      variant="outlined"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      margin="normal"
+                    />
+                  </Box>
+                  <Box mt={3}>
+                    <TextField
+                      fullWidth
+                      label="Giá"
+                      variant="outlined"
+                      name="price"
+                      value={numeral(formData.price).format('0,0')}
+                      onChange={handleChange}
+                      margin="normal"
+                    />
+                  </Box>
+                  <Box mt={3}>
+                    <TextField
+                      fullWidth
+                      label="Số người"
+                      variant="outlined"
+                      name="customerNumber"
+                      value={formData.customerNumber}
+                      onChange={handleChange}
+                      margin="normal"
+                    />
+                  </Box>
+                  <Box mt={3}>
+                    <FormControlLabel
+                      control={<Checkbox checked={formData.type === 'premium'} onChange={handleChange} name="premium" />}
+                      label="Premium"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={formData.type === 'standard'} onChange={handleChange} name="standard" />}
+                      label="Standard"
+                    />
+                  </Box>
                 </Box>
                 <Box mt={3}>
                   <Divider style={{ border: '1px solid', width: '100%' }} />
                 </Box>
                 <Box mt={3}>
                   <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-                    Danh sách bàn
+                    Danh sách đồ ăn
                   </Typography>
-                  {_.map(formData.tables, (table, index) => (
+                  {_.map(formData.items, (food, index) => (
                     <Grid2 container spacing={2} display="flex" alignItems="center" mt={3}>
                       <Box mt={3}>
                         <TextField
                           fullWidth
-                          label="Tên bàn"
+                          label="Tên món"
                           variant="outlined"
-                          name={`tableName-${index}`}
-                          value={table.name}
+                          name={`foodName-${index}`}
+                          value={food.name}
                           onChange={handleChange}
                           margin="normal"
                         />
@@ -447,7 +422,7 @@ export default function HomeStayList() {
                           onClick={() => {
                             setFormData((prevData) => ({
                               ...prevData,
-                              tables: _.filter(prevData.tables, (item, idx) => idx !== index),
+                              items: _.filter(prevData.items, (item, idx) => idx !== index),
                             }));
                           }}
                           variant="contained"
@@ -464,13 +439,13 @@ export default function HomeStayList() {
                       onClick={() => {
                         setFormData((prevData) => ({
                           ...prevData,
-                          tables: [...prevData.tables, { name: '', roomId: selectHomeStay.id }],
+                          items: [...prevData.items, {name: ''}],
                         }));
                       }}
                       variant="contained"
                       color="primary"
                     >
-                      + Thêm bàn
+                      + Thêm món ăn
                     </Button>
                   </Box>
                 </Box>
@@ -478,193 +453,11 @@ export default function HomeStayList() {
                   <Divider style={{ border: '1px solid', width: '100%' }} />
                 </Box>
 
-                {/* <Box mt={3}>
-                  <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-                    Giá áp dụng ngày đặc biệt
-                  </Typography>
-                  <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
-                    <Grid2 xs={2} md={2} sm={2} marginTop="22px">
-                      <Typography
-                        style={{ marginTop: '25px', marginRight: '25px' }}
-                        variant="h7"
-                        align="center"
-                        gutterBottom
-                      >
-                        Thời gian áp dụng :
-                      </Typography>
-                    </Grid2>
-
-                    <Grid2 xs={10} md={10} sm={10} display="flex">
-                      <LocalizationProvider dateAdapter={AdapterMoment} locale="vi" localeText={{}}>
-                        <Grid2 xs={5} md={5} sm={5} display="flex" justifyContent="center">
-                          <DatePicker
-                            label="Từ ngày"
-                            value={formData.startSpecialDate}
-                            onChange={(newValue) => {
-                              const params = {
-                                target: {
-                                  name: 'startSpecialDate',
-                                  value: newValue,
-                                },
-                              };
-                              handleChange(params);
-                            }}
-                            format="DD/MM/YYYY"
-                          />
-                        </Grid2>
-
-                        <Grid2 xs={2} md={2} sm={2}>
-                          <Box display="flex" justifyContent="center">
-                            {' '}
-                            <p style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '15px' }}>
-                              {' '}
-                              -{' '}
-                            </p>{' '}
-                          </Box>
-                        </Grid2>
-
-                        <Grid2 xs={5} md={5} sm={5} display="flex" justifyContent="center">
-                          <DatePicker
-                            label="Đến ngày"
-                            value={formData.endSpecialDate}
-                            onChange={(newValue) => {
-                              const params = {
-                                target: {
-                                  name: 'endSpecialDate',
-                                  value: newValue,
-                                },
-                              };
-                              handleChange(params);
-                            }}
-                            format="DD/MM/YYYY"
-                          />
-                        </Grid2>
-                      </LocalizationProvider>
-                    </Grid2>
-                  </Grid2>
-                  <Grid2 container spacing={2}>
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="3 giờ"
-                        variant="outlined"
-                        name="threeHoursSpecial"
-                        value={numeral(formData.threeHoursSpecial).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Qua đêm"
-                        variant="outlined"
-                        name="overNightSpecial"
-                        value={numeral(formData.overNightSpecial).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2}>
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Ngày"
-                        variant="outlined"
-                        name="daySpecial"
-                        value={numeral(formData.daySpecial).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-
-                    <Grid2 xs={6} md={6} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Tuần"
-                        variant="outlined"
-                        name="weekSpecial"
-                        value={numeral(formData.weekSpecial).format('0,0')}
-                        onChange={handleChange}
-                        margin="normal"
-                      />
-                    </Grid2>
-                  </Grid2>
-                </Box> */}
-
                 <Box mt={3}>
                   <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
                     Hình ảnh
                   </Typography>
                   <ImageUpdateForm onChange={onChangeImages} imagesData={formData.images} />
-                  {/* <Grid2 container spacing={2}>
-                      <Grid2 xs={6} md={6} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="3 giờ"
-                          variant="outlined"
-                          name="threeHours"
-                          value={numeral(formData.threeHours).format('0,0')}
-                          onChange={handleChange}
-                          margin="normal"
-                        />
-                        </ Grid2>
-
-                        <Grid2 xs={6} md={6} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Qua đêm"
-                          variant="outlined"
-                          name="overNight"
-                          value={numeral(formData.overNight).format('0,0')}
-                          onChange={handleChange}
-                          margin="normal"
-                        />
-                      </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2}>
-                      <Grid2 xs={6} md={6} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Ngày"
-                          variant="outlined"
-                          name="day"
-                          value={numeral(formData.day).format('0,0')}
-                          onChange={handleChange}
-                          margin="normal"
-                        />
-                        </ Grid2>
-
-                        <Grid2 xs={6} md={6} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Tuần"
-                          variant="outlined"
-                          name="week"
-                          value={numeral(formData.week).format('0,0')}
-                          onChange={handleChange}
-                          margin="normal"
-                        />
-                      </Grid2>
-                  </Grid2>
-
-                  <Grid2 container spacing={2}>
-                    <Grid2 xs={12} md={12} sm={12}>
-                          <TextField
-                            fullWidth
-                            label="Giảm giá"
-                            variant="outlined"
-                            name="compoDiscount"
-                            value={numeral(formData.compoDiscount).format('0,0')}
-                            onChange={handleChange}
-                            margin="normal"
-                          />
-                    </Grid2>
-                  </Grid2> */}
                 </Box>
 
                 <Box mt={3} display="flex" justifyContent="flex-end">
@@ -705,14 +498,14 @@ export default function HomeStayList() {
 
           <Dialog open={openConfirmDeleted} onClose={onCloseConfirmDelete} fullWidth maxWidth="xs">
             <DialogTitle style={{ fontWeight: 'normal' }}>
-              Bạn có chắc chắn muốn xóa HomeStay này ?
+              Bạn có chắc chắn muốn xóa Menu này ?
             </DialogTitle>
             <DialogContent>{/* Nội dung khác có thể thêm vào đây nếu cần */}</DialogContent>
             <DialogActions>
               <Button onClick={onCloseConfirmDelete} color="primary">
                 Không
               </Button>
-              <Button onClick={() => deletedHomeStay()} color="error" variant="contained">
+              <Button onClick={() => deletedMenu()} color="error" variant="contained">
                 Có
               </Button>
             </DialogActions>

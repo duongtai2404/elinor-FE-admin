@@ -406,7 +406,7 @@ export default function HomeStayList() {
               <form onSubmit={handleSubmit}>
                 <Box>
                   <Typography variant="h5" color="#1877F2" align="left" gutterBottom>
-                    Thông tin phòng
+                    Thông tin sảnh
                   </Typography>
 
                   <Box mt={3}>
