@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardContent, FormLabel, Grid, Input, Typography, Backdrop, CircularProgress } from '@mui/material';
 import axios from 'axios';
+import _ from 'lodash';
 
 const ImageUpdateForm = (props) => {
   const {onChange, type} = props;
@@ -68,7 +69,7 @@ const ImageUpdateForm = (props) => {
 
   return (
     <Grid container spacing={2} mt={3} display="flex" justifyContent="center">
-      {images.map((image, index) => (
+      {_.map(images, (image, index) => (
         <Grid item key={index} xs={2} md={2} sm={2} style={{minWidth: '250px', maxWidth: '250px', margin: '10px'}}>
           <Card>
             <CardContent>

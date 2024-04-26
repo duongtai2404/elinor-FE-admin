@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -35,7 +36,7 @@ export default function UserTableHead({
           />
         </TableCell>
 
-        {headLabel.map((headCell) => (
+        {_.map(headLabel, (headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.align || 'left'}

@@ -300,7 +300,7 @@ export default function HomeStayList() {
                 value={selectedMenu.id}
                 onChange={handleChangeMenu}
               >
-                {menuByPeople.map((room, index) => (
+                {_.map(menuByPeople, (room, index) => (
                   <MenuItem key={index} value={room.id}>
                     {room.name}
                   </MenuItem>

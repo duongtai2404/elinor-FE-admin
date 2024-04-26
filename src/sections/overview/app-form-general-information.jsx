@@ -309,7 +309,7 @@ export default function AppFormGeneralInformation() {
         <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
           <Grid2 container spacing={2} display="flex" justifyContent="center" mt={3}>
             <SortableContext items={data} strategy={verticalListSortingStrategy}>
-              {data.map((item) => (
+              {_.map(data, (item) => (
                 <SortableItem key={item.roomId} item={item} />
               ))}
             </SortableContext>

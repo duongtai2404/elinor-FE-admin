@@ -13,6 +13,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
 
+
 import {
   Box,
   Select,
@@ -388,7 +389,7 @@ export default function HomeStayList() {
                 value={selectRoomTitle}
                 onChange={handleChangeRoomTitle}
               >
-                {homestay.map((room, index) => (
+                {_.map(homestay, (room, index) => (
                   <MenuItem key={index} value={room.id}>
                     {room.name}
                   </MenuItem>
