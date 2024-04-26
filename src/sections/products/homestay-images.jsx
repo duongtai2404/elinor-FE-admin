@@ -10,7 +10,7 @@ import { Button, Card, CardContent, FormLabel, Grid, Input, Typography, Backdrop
 import axios from 'axios';
 
 const ImageUpdateForm = (props) => {
-  const {onChange} = props;
+  const {onChange, type} = props;
   const [images, setImages] = useState([]);
   const [onUploadImages, setOnUploadImages] = useState(false);
   const token = localStorage.getItem('token')
@@ -35,7 +35,7 @@ const ImageUpdateForm = (props) => {
             updatedImages[index] = response?.data?.url
             setImages(updatedImages);
             
-            onChange(updatedImages)
+            onChange(updatedImages, type)
         } else {
           updatedImages.splice(index, 1);
           setImages(updatedImages);
@@ -52,7 +52,7 @@ const ImageUpdateForm = (props) => {
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
     setImages(updatedImages);
-    onChange(updatedImages)
+    onChange(updatedImages, type)
   };
 
   const handleFileChange = (index, e) => {
@@ -120,10 +120,10 @@ const ImageUpdateForm = (props) => {
               type="file"
               accept="image/*"
               style={{ display: 'none' }}
-              id="add-image-input"
+              id={`add-image-input${type}`}
               onChange={(e) => handleFileChange(images.length, e)}
             />
-            <FormLabel htmlFor="add-image-input">
+            <FormLabel htmlFor={`add-image-input${type}`}>
               <Button variant="outlined" component="span">
                 +
               </Button>
@@ -144,6 +144,7 @@ const ImageUpdateForm = (props) => {
 ImageUpdateForm.propTypes = {
   imagesData: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func,
+  type: PropTypes.string
 };
 
 export default ImageUpdateForm;

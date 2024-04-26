@@ -107,14 +107,14 @@ export default function AppFormGeneralInformation() {
     }
   };
 
-  const onChangeAddressImages = (images) => {
+  const onChangeAddressImages = (images, type) => {
     setFormData((prevData) => ({
       ...prevData,
       addressImages: images,
     }));
   };
 
-  const onChangeLobbyImages = (images) => {
+  const onChangeLobbyImages = (images, type) => {
     setFormData((prevData) => ({
       ...prevData,
       lobbyImages: images,
@@ -324,14 +324,14 @@ export default function AppFormGeneralInformation() {
           <Typography variant="h5" fontWeight="normal" color="#1877F2" align="left" gutterBottom>
             Hình ảnh chỉ dẫn địa chỉ
           </Typography>
-          <ImageUpdateForm onChange={onChangeAddressImages} imagesData={formData.addressImages} />
+          <ImageUpdateForm onChange={onChangeAddressImages} imagesData={formData.addressImages} type='address' />
         </Box>
 
         <Box mt={3}>
           <Typography variant="h5" fontWeight="normal" color="#1877F2" align="left" gutterBottom>
             Hình ảnh hướng dẫn sảnh
           </Typography>
-          <ImageUpdateForm onChange={onChangeLobbyImages} imagesData={formData.lobbyImages} />
+          <ImageUpdateForm onChange={onChangeLobbyImages} imagesData={formData.lobbyImages} type='lobby' />
         </Box>
 
         <Box mt={3} display="flex" justifyContent="flex-end">
