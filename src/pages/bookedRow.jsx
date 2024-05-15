@@ -228,7 +228,7 @@ const BookedRow = (props) => {
                 onClick={() => setIsOpenCancel(true)}
               />
 
-              {1 && (
+              {booking.status === 'PENDING' && (
                 <Chip
                   size="medium"
                   label="Xác nhận đã thanh toán"
