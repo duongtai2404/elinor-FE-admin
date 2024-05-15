@@ -18,12 +18,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
+import Snackbar from '@mui/material/Snackbar';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import ConfirmDialog from 'src/components/dialog';
 
 const BookedRow = (props) => {
   const { booking, subimitSearch } = props;
   const token = localStorage.getItem('token');
+
+  const [loading, setLoading] = React.useState(false);
 
   // dialog gửi lại mail
   const [isOpenResendEmail, setIsOpenResendEmail] = React.useState(false);
@@ -33,9 +37,14 @@ const BookedRow = (props) => {
   const handleAgree = async () => {
     setIsOpenResendEmail(false);
     try {
-      await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/booking/reSendMail`, {
-        bookingId: booking.id,
-      });
+      await axios.post(
+        `${
+          import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'
+        }/booking/reSendMail`,
+        {
+          bookingId: booking.id,
+        }
+      );
     } catch (error) {
       console.log(`[ERROR] reSendMail ${error}`);
     }
@@ -43,6 +52,13 @@ const BookedRow = (props) => {
 
   // dialog hủy bàn
   const [isOpenCancel, setIsOpenCancel] = React.useState(false);
+
+  // dialog xác nhận thanh toán
+  const [isOpenConfirmPaid, setIsOpenConfirmPaid] = React.useState(false);
+
+  // dialog xác nhận thanh toán
+  const [isOpenSnackBar, setIsOpenSnackBar] = React.useState(false);
+
   const handleDisagreeCancel = () => {
     setIsOpenCancel(false);
   };
@@ -50,7 +66,9 @@ const BookedRow = (props) => {
     setIsOpenCancel(false);
     try {
       await axios.post(
-        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/booking/delete`,
+        `${
+          import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'
+        }/booking/delete`,
         {
           bookingId: booking.id,
         },
@@ -66,6 +84,54 @@ const BookedRow = (props) => {
     subimitSearch();
   };
 
+  const handleDisagreeConfirmPaid = () => {
+    setIsOpenConfirmPaid(false);
+  };
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const handlePaid = async () => {
+    setLoading(true);
+    await handleAgreeConfirmPaid();
+    setIsOpenSnackBar(true);
+    setLoading(false);
+    await sleep(1500);
+    subimitSearch();
+  };
+  const handleSendMail = async () => {
+    setLoading(true);
+    await handleAgree();
+    setIsOpenSnackBar(true);
+    setLoading(false);
+  };
+  const handleCancel = async () => {
+    setLoading(true);
+    await handleAgreeCancel();
+    setIsOpenSnackBar(true);
+    setLoading(false);
+    await sleep(1500);
+    subimitSearch();
+  };
+  const handleAgreeConfirmPaid = async () => {
+    setIsOpenConfirmPaid(false);
+    try {
+      await axios.post(
+        `${
+          import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'
+        }/booking/confirmPaid`,
+        {
+          bookingId: booking.id,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(`[ERROR] `);
+    }
+    sleep(500);
+  };
+
   // dialog xem và edit ghi chú
   const [isOpenNote, setIsOpenNote] = React.useState(false);
   const [note, setNote] = React.useState(booking.note);
@@ -76,7 +142,9 @@ const BookedRow = (props) => {
     setIsOpenNote(false);
     try {
       await axios.post(
-        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/booking/addNote`,
+        `${
+          import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'
+        }/booking/addNote`,
         {
           bookingId: booking.id,
           note,
@@ -133,66 +201,70 @@ const BookedRow = (props) => {
         )}
       </TableCell>
       <TableCell align="center" style={{ margin: 'auto' }}>
-        <Select
-          labelId="demo-simple-select-standard-label"
-          id="demo-simple-select-standard"
-          label="Hành động"
-          style={{
-            outline: 'none',
-          }}
-        >
-          <Stack direction="column" spacing={1} justifyContent="center" alignItems="center">
-            <Chip
-              size="medium"
-              label="Gửi mail"
-              color="primary"
-              clickable
-              onClick={() => setIsOpenResendEmail(true)}
-            />
-            <Chip
-              size="medium"
-              label="Hủy bàn"
-              color="error"
-              clickable
-              onClick={() => setIsOpenCancel(true)}
-            />
-            <Chip
-              size="medium"
-              label="Xác nhận đã thanh toán"
-              color="secondary"
-              clickable
-              onClick={() => setIsOpenCancel(true)}
-            />
-          </Stack>
-        </Select>
-        {/* <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-          <Chip
-            size="small"
-            label="Gửi mail"
-            color="primary"
-            clickable
-            onClick={() => setIsOpenResendEmail(true)}
-          />
-          <Chip
-            size="small"
-            label="Hủy bàn"
-            color="error"
-            clickable
-            onClick={() => setIsOpenCancel(true)}
-          />
-        </Stack> */}
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Select
+            labelId="demo-simple-select-standard-label"
+            id="demo-simple-select-standard"
+            label="Hành động"
+            style={{
+              outline: 'none',
+            }}
+          >
+            <Stack direction="column" spacing={1} justifyContent="center" alignItems="center">
+              <Chip
+                size="medium"
+                label="Gửi mail"
+                color="primary"
+                clickable
+                onClick={() => setIsOpenResendEmail(true)}
+              />
+              <Chip
+                size="medium"
+                label="Hủy bàn"
+                color="error"
+                clickable
+                onClick={() => setIsOpenCancel(true)}
+              />
+
+              {1 && (
+                <Chip
+                  size="medium"
+                  label="Xác nhận đã thanh toán"
+                  color="secondary"
+                  clickable
+                  onClick={() => setIsOpenConfirmPaid(true)}
+                />
+              )}
+            </Stack>
+          </Select>
+        )}
       </TableCell>
       <ConfirmDialog
         title="Bạn có chắc chắn muốn gửi lại mail ?"
         isOpen={isOpenResendEmail}
         handleDisagree={handleDisagree}
-        handleAgree={handleAgree}
+        handleAgree={handleSendMail}
       />
       <ConfirmDialog
         title="Bạn có chắc chắn muốn hủy ?"
         isOpen={isOpenCancel}
         handleDisagree={handleDisagreeCancel}
-        handleAgree={handleAgreeCancel}
+        handleAgree={handleCancel}
+      />
+      <ConfirmDialog
+        title="Bạn chắc chắn muốn xác nhận đã thanh toán ?"
+        isOpen={isOpenConfirmPaid}
+        handleDisagree={handleDisagreeConfirmPaid}
+        handleAgree={handlePaid}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={isOpenSnackBar}
+        autoHideDuration={20000}
+        onClose={() => setIsOpenSnackBar(false)}
+        message="Thành công !"
       />
       <Dialog open={isOpenNote} onClose={handleDisagreeNote}>
         <DialogContent>
