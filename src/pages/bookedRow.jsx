@@ -81,7 +81,6 @@ const BookedRow = (props) => {
     } catch (error) {
       console.log(`[ERROR] `);
     }
-    subimitSearch();
   };
 
   const handleDisagreeConfirmPaid = () => {
@@ -220,13 +219,16 @@ const BookedRow = (props) => {
                 clickable
                 onClick={() => setIsOpenResendEmail(true)}
               />
-              <Chip
-                size="medium"
-                label="Hủy bàn"
-                color="error"
-                clickable
-                onClick={() => setIsOpenCancel(true)}
-              />
+
+              {booking.status === 'PENDING' && (
+                <Chip
+                  size="medium"
+                  label="Hủy bàn"
+                  color="error"
+                  clickable
+                  onClick={() => setIsOpenCancel(true)}
+                />
+              )}
 
               {booking.status === 'PENDING' && (
                 <Chip
