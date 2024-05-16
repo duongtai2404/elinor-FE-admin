@@ -43,7 +43,7 @@ export default function ChangePassView() {
         password: changePassData.oldPass,
         newPassword: changePassData.newPass
       }
-        let loginResult = await axios.post('https://molly-patient-trivially.ngrok-free.app/admin/changePassword', data);
+        let loginResult = await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/admin/changePassword`, data);
         loginResult = loginResult?.data;
         if (loginResult?.code === 1000) {
           setToastInfo({

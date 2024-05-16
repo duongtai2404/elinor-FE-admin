@@ -79,7 +79,7 @@ export default function HomeStayCreate() {
 
     try {
       let updateHomeStay = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room',
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/room`,
         data,
         {
           headers: {

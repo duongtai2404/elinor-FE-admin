@@ -75,7 +75,7 @@ export default function AppFormGeneralInformation() {
         roomOrder: data,
       };
       let updateInfo = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/siteInfo/update',
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/siteInfo/update`,
         updateData,
         {
           headers: {
@@ -124,7 +124,7 @@ export default function AppFormGeneralInformation() {
   useEffect(() => {
     const fetchInfo = async () => {
       try {
-        let info = await axios.post('https://molly-patient-trivially.ngrok-free.app/siteInfo');
+        let info = await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/siteInfo`);
         info = info?.data;
         if (info?.code === 1000) {
           setFormData(info?.data);

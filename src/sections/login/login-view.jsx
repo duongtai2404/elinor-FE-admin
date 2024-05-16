@@ -43,7 +43,7 @@ export default function LoginView(props) {
         username: loginData.username,
         password: loginData.password
       }
-        let loginResult = await axios.post('https://molly-patient-trivially.ngrok-free.app/admin/login', data);
+        let loginResult = await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/admin/login`, data);
         loginResult = loginResult?.data;
         if (loginResult?.code === 1000) {
           onLogin(loginResult.token)

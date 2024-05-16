@@ -194,7 +194,7 @@ export default function HomeStayList() {
 
     try {
       let updateHomeStay = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room',
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/room`,
         data,
         {
           headers: {
@@ -203,7 +203,7 @@ export default function HomeStayList() {
         }
       );
       const updateTable = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/table',
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/table`,
         {
           tableList: formData.tables,
         },
@@ -292,7 +292,7 @@ export default function HomeStayList() {
         isDeleted: true,
       };
       let deletedResult = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room',
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/room`,
         data,
         {
           headers: {
@@ -328,7 +328,7 @@ export default function HomeStayList() {
   const fetchHomeStay = async () => {
     try {
       let homestayResult = await axios.post(
-        'https://molly-patient-trivially.ngrok-free.app/room/search'
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/room/search`,
       );
       homestayResult = homestayResult?.data;
       if (homestayResult?.code === 1000) {

@@ -163,7 +163,7 @@ const Statistic = (props) => {
       if (bookingIdFilter) queryParams.bookingId = bookingIdFilter;
       console.log('\n - file: adminTable.js:33 - fetchRoomAvailable - queryParams:', queryParams);
 
-      let response = await axios.post('https://molly-patient-trivially.ngrok-free.app/room/checkAvailable', queryParams);
+      let response = await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/room/checkAvailable`, queryParams);
       response = response?.data || {};
       console.log('\n - fetchRoomAvailable - response:', response);
 
@@ -185,7 +185,7 @@ const Statistic = (props) => {
       if (from) queryParams.from = from;
       if (to) queryParams.to = to;
 
-      let response = await axios.post('https://molly-patient-trivially.ngrok-free.app/booking/statistics', queryParams);
+      let response = await axios.post(`${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/booking/statistics`, queryParams);
       response = response?.data || {};
 
       setStatisticData(response?.data);
