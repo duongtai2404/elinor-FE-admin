@@ -121,6 +121,13 @@ export default function AppFormGeneralInformation() {
     }));
   };
 
+  const onChangeBannerImages = (images, type) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      bannerImages: images,
+    }));
+  };
+
   useEffect(() => {
     const fetchInfo = async () => {
       try {
@@ -318,6 +325,13 @@ export default function AppFormGeneralInformation() {
 
         <Box mt={3}>
           <Divider style={{ border: '1px solid', width: '100%' }} />
+        </Box>
+
+        <Box mt={3}>
+          <Typography variant="h5" fontWeight="normal" color="#1877F2" align="left" gutterBottom>
+            Hình ảnh Banner
+          </Typography>
+          <ImageUpdateForm onChange={onChangeBannerImages} imagesData={formData.bannerImages} type='banner' />
         </Box>
 
         <Box mt={3}>
