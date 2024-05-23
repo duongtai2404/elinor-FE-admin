@@ -91,7 +91,7 @@ export default function HomeStayCreate() {
       const updateTable = await axios.post(
         `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/table`,
         {
-          tableList: formData.tables,
+          tableList: _.map(formData.tables, (table) => ({ name: table.name, roomId: updateHomeStay?.data?.room?.id })),
         },
         {
           headers: {
