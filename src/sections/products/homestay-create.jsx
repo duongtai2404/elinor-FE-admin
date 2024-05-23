@@ -88,6 +88,17 @@ export default function HomeStayCreate() {
         }
       );
       updateHomeStay = updateHomeStay?.data;
+      const updateTable = await axios.post(
+        `${import.meta.env.VITE_URL_BACKEND || 'https://molly-patient-trivially.ngrok-free.app'}/table`,
+        {
+          tableList: formData.tables,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
       if (updateHomeStay?.code === 1000) {
         setToastInfo({
           type: 'success',
