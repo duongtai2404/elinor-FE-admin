@@ -104,6 +104,7 @@ export default function HomeStayCreate() {
           type: 'success',
           message: 'Tạo thành công',
         });
+        window.location.reload();
       } else {
         setToastInfo({
           type: 'success',
