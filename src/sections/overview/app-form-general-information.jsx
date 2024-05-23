@@ -29,6 +29,9 @@ export default function AppFormGeneralInformation() {
     address: 'Địa chỉ',
     googleMap: 'Google map',
     code: 'Mã khóa',
+    facebook: 'Facebook',
+    tiktok: 'Tiktok',
+    instagram: 'Instagram'
   });
 
   const [data, setData] = useState([]);
@@ -192,6 +195,48 @@ export default function AppFormGeneralInformation() {
               variant="outlined"
               name="code"
               value={formData.code}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Box>
+        </Grid>
+
+        <Grid xs={6} md={6} lg={6}>
+          <Box mt={3}>
+            <TextField
+              fullWidth
+              label="Facebook"
+              variant="outlined"
+              name="facebook"
+              value={formData.facebook}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Box>
+        </Grid>
+
+        <Grid xs={6} md={6} lg={6}>
+          <Box mt={3}>
+            <TextField
+              fullWidth
+              label="Tiktok"
+              variant="outlined"
+              name="tiktok"
+              value={formData.tiktok}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Box>
+        </Grid>
+
+        <Grid xs={6} md={6} lg={6}>
+          <Box mt={3}>
+            <TextField
+              fullWidth
+              label="Instagram"
+              variant="outlined"
+              name="instagram"
+              value={formData.instagram}
               onChange={handleChange}
               margin="normal"
             />
