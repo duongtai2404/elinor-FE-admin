@@ -29,9 +29,9 @@ export default function AppFormGeneralInformation() {
     address: 'Địa chỉ',
     googleMap: 'Google map',
     code: 'Mã khóa',
-    facebook: 'Facebook',
-    tiktok: 'Tiktok',
-    instagram: 'Instagram'
+    facebook: '',
+    tiktok: '',
+    instagram: ''
   });
 
   const [data, setData] = useState([]);
